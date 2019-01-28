@@ -80,22 +80,19 @@ cask "anaconda"
 cask "android-file-transfer"
 cask "android-platform-tools"
 cask "android-sdk"
-cask "apple-brotherprinterdrivers"
+cask "apple-brother-printer-drivers"
 cask "asset-catalog-tinkerer"
 cask "balenaetcher"
 cask "bartender"
 cask "betterzip"
 cask "blender"
 cask "calibre"
-cask "chromium"
-cask "cyberduck"
+#cask "cyberduck"
 cask "disk-inventory-x"
 cask "dropbox"
-cask "firefox"
 cask "flux"
 cask "font-consolas-for-powerline"
 cask "font-hasklig"
-cask "font-menlo-for-powerline"
 cask "gdisk"
 cask "gemini"
 cask "gfxcardstatus"
@@ -105,8 +102,8 @@ cask "google-cloud-sdk"
 cask "growlnotify"
 cask "handbrake"
 cask "iexplorer"
-cask "ifunbox"
-cask "iina"
+#cask "ifunbox"
+#cask "iina"
 cask "imagealpha"
 cask "imageoptim"
 cask "impactor"
@@ -121,11 +118,10 @@ cask "liteicon"
 cask "macdown"
 cask "megasync"
 cask "microsoft-office"
-cask "monodraw"
 cask "openemu"
 cask "paragon-extfs"
 cask "paragon-ntfs"
-cask "plex-media-server"
+#cask "plex-media-server"
 cask "private-internet-access"
 cask "pycharm"
 cask "qlcolorcode"
@@ -146,7 +142,7 @@ cask "sublime-merge"
 cask "sublime-text"
 cask "suspicious-package"
 cask "telegram"
-cask "tinyumbrella"
+#cask "tinyumbrella"
 cask "transmission"
 cask "tuxguitar"
 cask "visual-studio-code"
@@ -156,15 +152,13 @@ cask "webpquicklook"
 mas "Amphetamine", id: 937984704
 mas "Bear", id: 1091189122
 mas "DaisyDisk", id: 411643860
-mas "Install macOS Mojave", id: 0
-mas "Install macOS Sierra", id: 1127487414
-mas "Install OS X Mavericks", id: 675248567
-mas "Install OS X Mountain Lion", id: 537386512
-mas "Install OS X Yosemite", id: 915041082
 mas "Keynote", id: 409183694
 mas "Magnet", id: 441258766
+mas "Monodraw", id: 920404675
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
 mas "Pocket", id: 568494494
 mas "Smart Converter Pro 2", id: 660234210
-mas "Xcode", id: 497799835
+mas "Termius-ssh-client", id: 1176074088
+mas "TextWrangler", id: 404010395
+#mas "Xcode", id: 497799835
