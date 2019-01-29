@@ -225,6 +225,10 @@ defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
 defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
 defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 
+###############################################################################
+# Desktop                                                                     #
+###############################################################################
+
 # Show item info near icons on the desktop and in other icon views
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
@@ -238,12 +242,19 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
+# Increase grid spacing for icons on the desktop and in other icon views
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
+
+# Increase the size of icons on the desktop and in other icon views
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
+
 # Use list view in all Finder windows by default
 # Four-letter codes for the other view modes: `icnv`, `Nlsv`, `Flwv`
 defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
-
-# Disable the warning before emptying the Trash
-defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
 # Show the ~/Library folder
 chflags nohidden ~/Library
@@ -257,16 +268,6 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 	General -bool true \
 	OpenWith -bool true \
 	Privileges -bool true
-
-# Increase grid spacing for icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
-
-# Increase the size of icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
 
 # Keep folders on top when sorting by name
 #defaults write com.apple.finder _FXSortFoldersFirst -bool true
@@ -287,11 +288,8 @@ defaults write com.apple.dock tilesize -int 40
 # Icon size of magnified Dock items
 defaults write com.apple.dock largesize -int 64
 
-# Set the Dock magnification effect to 40 pixels
-defaults write com.apple.dock magnification -int 40
-
 # Change minimize/maximize window effect
-defaults write com.apple.dock mineffect -string "suck"
+defaults write com.apple.dock mineffect -string 'suck'
 
 # Minimize windows into their application’s icon
 defaults write com.apple.dock minimize-to-application -bool true
@@ -316,6 +314,9 @@ defaults write com.apple.dock autohide -bool true
 
 # Don’t show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
+
+# Disable the warning before emptying the Trash
+defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
 ###############################################################################
 # Dashboard                                                                   #
