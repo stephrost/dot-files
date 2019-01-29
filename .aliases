@@ -121,25 +121,25 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 	alias "$method"="lwp-request -m '$method'"
 done
 
-# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
+# because of http://xkcd.com/530/
 alias stfu="osascript -e 'set volume output muted true'"
 alias pumpitup="osascript -e 'set volume 7'"
 alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 
+
+#mine
+
 # Convert AndroidManifest.xml binary to human-readable
 alias axml='java -jar ~/jre/AXMLPrinter2.jar'
-
-# Hidden Toggle
-alias showFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
-alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 
 # Disable/Enable NC
 alias disableNC='launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist; killall NotificationCenter'
 alias enableNC='launchctl load -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist; open /System/Library/CoreServices/NotificationCenter.app/'
 
-# brewit, listicle
 alias brewit='brew update; brew upgrade; mas upgrade; brew cask upgrade; brew cleanup; brew doctor'
+
 alias listicle='brew list; brew cask list; mas list'
+
 alias svg2png='for file in *.svg; do inkscape $file -z -w 180 -e ${file%svg}png; done'
 
 alias repower="powerline-daemon -k; sleep 2; powerline-daemon -q"

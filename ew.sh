@@ -41,6 +41,9 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # General UI/UX                                                               #
 ###############################################################################
 
+# Open identified developer, appstore, any all applications
+sudo spctl --master-disable
+
 # Set computer name (as done via System Preferences → Sharing)
 sudo scutil --set ComputerName "pewta"
 sudo scutil --set HostName "pewta"
@@ -136,7 +139,7 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 10
+defaults write NSGlobalDomain InitialKeyRepeat -int 5
 
 # Use scroll gesture with the Ctrl (^) modifier key to zoom
 #defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
@@ -152,7 +155,7 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 10
 # Screenshots                                                                 #
 ###############################################################################
 
-# Save screenshots to the desktop
+# Save screenshots to the Dropbox Folder
 defaults write com.apple.screencapture location -string "${HOME}/Dropbox/Screenshots"
 
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
@@ -172,17 +175,8 @@ killall Dock
 # Finder                                                                      #
 ###############################################################################
 
-# Open identified developer, appstore, any all applications
-sudo spctl --master-disable
-
 # Finder: allow quitting via ⌘ + Q; doing so will also hide desktop icons
 defaults write com.apple.finder QuitMenuItem -bool true
-
-# Show icons for hard drives, servers, and removable media on the desktop
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
-defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
 # Finder: show hidden files by default
 defaults write com.apple.finder AppleShowAllFiles -bool true
@@ -260,7 +254,7 @@ defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
 chflags nohidden ~/Library
 
 # Show the /Volumes folder
-sudo chflags nohidden /Volumes
+chflags nohidden /Volumes
 
 # Expand the following File Info panes:
 # “General”, “Open with”, and “Sharing & Permissions”
@@ -268,6 +262,12 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 	General -bool true \
 	OpenWith -bool true \
 	Privileges -bool true
+
+# Show icons for hard drives, servers, and removable media on the desktop
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
+defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
 # Keep folders on top when sorting by name
 #defaults write com.apple.finder _FXSortFoldersFirst -bool true
@@ -277,7 +277,7 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 ###############################################################################
 
 # Dock orientation: 'left', 'bottom', 'right'
-defaults write com.apple.dock 'orientation' -string 'left'
+defaults write com.apple.dock orientation -string 'left'
 
 # Dock magnification
 defaults write com.apple.dock magnification -bool true
@@ -329,7 +329,7 @@ defaults write com.apple.dashboard mcx-disabled -bool true
 defaults write com.apple.dock dashboard-in-overlay -bool true
 
 # Enable Dashboard dev mode (allows keeping widgets on the desktop)
-defaults write com.apple.dashboard devmode -bool true
+#defaults write com.apple.dashboard devmode -bool true
 
 ###############################################################################
 # Mission Control                                                             #
@@ -347,9 +347,9 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 ###############################################################################
 
 # Disable Notification Center
-launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
+#launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
 # Remove Notification Center icon (leaves blank space)
-rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
+#rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
 
 ###############################################################################
 # Hot corners                                                                 #
@@ -578,6 +578,7 @@ defaults write com.apple.addressbook ABShowDebugMenu -bool true
 
 # Use plain text mode for new TextEdit documents
 defaults write com.apple.TextEdit RichText -int 0
+
 # Open and save files as UTF-8 in TextEdit
 defaults write com.apple.TextEdit PlainTextEncoding -int 4
 defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
@@ -680,6 +681,13 @@ defaults write org.m0k.transmission BlocklistAutoUpdate -bool true
 
 # Randomize port on launch
 defaults write org.m0k.transmission RandomPort -bool true
+
+###############################################################################
+# Adobe CC                                                                    #
+###############################################################################
+
+# Prevent Adobe CC auto-launch
+launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 
 ###############################################################################
 # Kill affected applications                                                  #
