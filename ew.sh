@@ -90,16 +90,13 @@ defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 # Disable Resume system-wide
-#defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
-
-# Restart automatically if the computer freezes
-#sudo systemsetup -setrestartfreeze on
+defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
 
 # Disable the over-the-top focus ring animation
-#defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
+defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
 
 # Increase window resize speed for Cocoa applications
-#defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 
 # Expand save panel by default
 #defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
@@ -110,66 +107,21 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 #defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 ###############################################################################
-# SSD-specific tweaks                                                         #
-###############################################################################
-
-# Disable hibernation (speeds up entering sleep mode)
-#sudo pmset -a hibernatemode 0
-
-# Remove the sleep image file to save disk space
-#sudo rm /private/var/vm/sleepimage
-
-# Create a zero-byte file instead…
-#sudo touch /private/var/vm/sleepimage
-
-# …and make sure it can’t be rewritten
-#sudo chflags uchg /private/var/vm/sleepimage
-
-###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
 
 # Trackpad: enable tap to click for this user and for the login screen
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+sudo defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+sudo defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+sudo defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Increase sound quality for Bluetooth headphones/headsets
 defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
 
 # Set a blazingly fast keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 5
-
-# Use scroll gesture with the Ctrl (^) modifier key to zoom
-#defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
-#defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
-
-# Follow the keyboard focus while zoomed in
-#defaults write com.apple.universalaccess closeViewZoomFollowsFocus -bool true
-
-# Disable press-and-hold for keys in favor of key repeat
-#defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-
-###############################################################################
-# Screenshots                                                                 #
-###############################################################################
-
-# Save screenshots to the Dropbox Folder
-defaults write com.apple.screencapture location -string "${HOME}/Dropbox/Screenshots"
-
-# Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
-defaults write com.apple.screencapture type -string "png"
-
-###############################################################################
-# Launchpad                                                                   #
-###############################################################################
-
-# Set Launchpad dimensions
-defaults write com.apple.dock springboard-columns -int 12
-defaults write com.apple.dock springboard-rows -int 7
-defaults write com.apple.dock ResetLaunchPad -bool TRUE
-killall Dock
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 ###############################################################################
 # Finder                                                                      #
@@ -332,6 +284,16 @@ defaults write com.apple.dock dashboard-in-overlay -bool true
 #defaults write com.apple.dashboard devmode -bool true
 
 ###############################################################################
+# Launchpad                                                                   #
+###############################################################################
+
+# Set Launchpad dimensions
+defaults write com.apple.dock springboard-columns -int 12
+defaults write com.apple.dock springboard-rows -int 7
+defaults write com.apple.dock ResetLaunchPad -bool true
+killall Dock
+
+###############################################################################
 # Mission Control                                                             #
 ###############################################################################
 
@@ -347,38 +309,19 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 ###############################################################################
 
 # Disable Notification Center
-#launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
+launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
 # Remove Notification Center icon (leaves blank space)
-#rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
+rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
 
 ###############################################################################
-# Hot corners                                                                 #
+# Screenshots                                                                 #
 ###############################################################################
 
-# Hot corners
-# Possible values:
-#  0: no-op
-#  2: Mission Control
-#  3: Show application windows
-#  4: Desktop
-#  5: Start screen saver
-#  6: Disable screen saver
-#  7: Dashboard
-# 10: Put display to sleep
-# 11: Launchpad
-# 12: Notification Center
+# Save screenshots to the Dropbox Folder
+defaults write com.apple.screencapture location -string "${HOME}/Dropbox/Screenshots"
 
-# Top left screen corner → Mission Control
-#defaults write com.apple.dock wvous-tl-corner -int 2
-#defaults write com.apple.dock wvous-tl-modifier -int 0
-
-# Top right screen corner → Desktop
-#defaults write com.apple.dock wvous-tr-corner -int 4
-#defaults write com.apple.dock wvous-tr-modifier -int 0
-
-# Bottom left screen corner → Start screen saver
-#defaults write com.apple.dock wvous-bl-corner -int 5
-#defaults write com.apple.dock wvous-bl-modifier -int 0
+# Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
+defaults write com.apple.screencapture type -string "png"
 
 ###############################################################################
 # Safari & WebKit                                                             #
@@ -481,7 +424,7 @@ defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnabled"
 
 ###############################################################################
-# Terminal & iTerm 2                                                          #
+# Terminal                                                                    #
 ###############################################################################
 
 # Only use UTF-8 in Terminal.app
@@ -546,6 +489,10 @@ defaults write com.apple.terminal SecureKeyboardEntry -bool true
 # Disable the annoying line marks
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
+###############################################################################
+# iTerm 2                                                                     #
+###############################################################################
+
 # Install the Solarized Dark theme for iTerm
 open "init/Solarized Dark.itermcolors"
 
@@ -570,11 +517,31 @@ defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
 defaults write com.apple.ActivityMonitor SortDirection -int 0
 
 ###############################################################################
-# Contacts, TextEdit, Disk Utility, Photos, Time Machine #
+# Messages                                                                    #
+###############################################################################
+
+# Disable automatic emoji substitution (i.e. use plain text smileys)
+defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
+
+# Disable smart quotes as it’s annoying for messages that contain code
+defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticQuoteSubstitutionEnabled" -bool false
+
+# Disable continuous spell checking
+defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
+
+###############################################################################
+# Contacts, Disk Utility, Photos, TextEdit                                    #
 ###############################################################################
 
 # Enable the debug menu in Contacts
 defaults write com.apple.addressbook ABShowDebugMenu -bool true
+
+# Enable the debug menu in Disk Utility
+defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
+defaults write com.apple.DiskUtility advanced-image-options -bool true
+
+# Prevent Photos from opening automatically when devices are plugged in
+defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 
 # Use plain text mode for new TextEdit documents
 defaults write com.apple.TextEdit RichText -int 0
@@ -583,21 +550,28 @@ defaults write com.apple.TextEdit RichText -int 0
 defaults write com.apple.TextEdit PlainTextEncoding -int 4
 defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
-# Enable the debug menu in Disk Utility
-defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
-defaults write com.apple.DiskUtility advanced-image-options -bool true
-
-# Auto-play videos when opened with QuickTime Player
-defaults write com.apple.QuickTimePlayerX MGPlayMovieOnOpen -bool true
-
-# Prevent Photos from opening automatically when devices are plugged in
-defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+###############################################################################
+# Time Machine                                                                #
+###############################################################################
 
 # Prevent Time Machine from prompting to use new hard drives as backup volume
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
+# Disable automatic backups
+sudo tmutil disable
+
+# List the snapshots
+#tmutil listLocalSnapShots /
+
+# Delete all the snapshots, 1 at a time:
+for snap in $(tmutil listLocalSnapShots / | cut -d '.' -f 4); do
+sudo tmutil deleteLocalSnapshots $snap; done
+
+# Verify that all of the snapshots are gone:
+#tmutil listLocalSnapShots /
+
 ###############################################################################
-# Mac App Store                                                               #
+# App Store                                                                   #
 ###############################################################################
 
 # Enable the WebKit Developer Tools in the Mac App Store
@@ -628,17 +602,11 @@ defaults write com.apple.commerce AutoUpdate -bool true
 defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
 
 ###############################################################################
-# Messages                                                                    #
+# Adobe CC                                                                    #
 ###############################################################################
 
-# Disable automatic emoji substitution (i.e. use plain text smileys)
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
-
-# Disable smart quotes as it’s annoying for messages that contain code
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticQuoteSubstitutionEnabled" -bool false
-
-# Disable continuous spell checking
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
+# Prevent Adobe CC auto-launch
+launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 
 ###############################################################################
 # Sublime Text                                                                #
@@ -646,6 +614,12 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 
 # Install Sublime Text settings
 cp -r init/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text*/Packages/User/Preferences.sublime-settings 2> /dev/null
+
+#remove license popups
+cp -r init/killic.py ~/Library/Application\ Support/Sublime\ Text*/Packages/User/killic.py 2> /dev/null
+
+# st3 license check
+echo "127.0.0.1 license.sublimehq.com" >> /etc/hosts
 
 ###############################################################################
 # Transmission.app                                                            #
@@ -681,13 +655,6 @@ defaults write org.m0k.transmission BlocklistAutoUpdate -bool true
 
 # Randomize port on launch
 defaults write org.m0k.transmission RandomPort -bool true
-
-###############################################################################
-# Adobe CC                                                                    #
-###############################################################################
-
-# Prevent Adobe CC auto-launch
-launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 
 ###############################################################################
 # Kill affected applications                                                  #
