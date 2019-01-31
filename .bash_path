@@ -1,17 +1,45 @@
-#user bin
-export PATH="$PATH:$HOME/bin"
+#!/bin/bash
 
-#brew sbin
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+# bash_paths
 
-#gnu
-#export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-#export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
+# Directories to be prepended to PATH
+declare -a dirs_to_prepend=(
+    "/usr/local/bin" # Ensure that this bin always takes precedence over `/usr/bin`
+    "/usr/local/sbin" # Another BrewPath
+)
 
-export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+# Directories to be appended to PATH
+declare -a dirs_to_append=(
+    "/usr/bin"
+    #"$HOME/bin"
+    #"$HOME/.dotfiles/bin"
+    #"$HOME/.rvm/bin"
+    "$(brew --prefix coreutils)/libexec/gnubin" # Add brew-installed GNU core utilities bin
+    "/usr/local/opt/findutils/libexec/gnubin"
+    "/usr/local/opt/grep/libexec/gnubin"
+    "/usr/local/opt/gnu-sed/libexec/gnubin"
+    "/usr/local/opt/gnu-tar/libexec/gnubin"
+    #"$(brew --prefix)/share/npm/bin" # Add npm-installed package bin
+)
+
+# Prepend directories to PATH
+for index in ${!dirs_to_prepend[*]}
+do
+    if [ -d ${dirs_to_prepend[$index]} ]; then
+        # If these directories exist, then prepend them to existing PATH
+        PATH="${dirs_to_prepend[$index]}:$PATH"
+    fi
+done
+
+# Append directories to PATH
+for index in ${!dirs_to_append[*]}
+do
+    if [ -d ${dirs_to_append[$index]} ]; then
+        # If these bins exist, then append them to existing PATH
+        PATH="$PATH:${dirs_to_append[$index]}"
+    fi
+done
+
+unset dirs_to_prepend dirs_to_append
 
 export PATH
