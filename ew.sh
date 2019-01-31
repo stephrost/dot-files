@@ -1,32 +1,42 @@
  #!/usr/bin/env bash
 
-# Make sure we’re using the latest Homebrew.
-brew update
+###############################################################################
+# Homebrew & Bash                                                             #
+###############################################################################
 
-# Upgrade any already-installed formulae.
-brew upgrade
+echo -n "Run 'Brew & Bash' portion of this script? (y/n) "
+read answer
+if echo "$answer" | grep -iq "^y"
+then
+    echo "Brew it to it"
+    # Update to latest Homebrew and upgrade existing formulae
+    brew update && brew upgrade
 
-# Save Homebrew’s installed location.
-BREW_PREFIX=$(brew --prefix)
+    # Save Homebrew’s installed location
+    BREW_PREFIX=$(brew --prefix)
 
-# Install GNU core utilities (those that come with macOS are outdated).
-# Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
+    # Install bash 5 and bash-completion 2
+    brew install bash
+    brew install bash-completion@2
 
-# Install Bash 5.
-brew install bash
-brew install bash-completion@2
+    # Switch to using brew-installed bash as default shell
+    if ! fgrep -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
+      echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
+      chsh -s "${BREW_PREFIX}/bin/bash";
+    fi;
 
-# Switch to using brew-installed bash as default shell
-if ! fgrep -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
-  echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
-  chsh -s "${BREW_PREFIX}/bin/bash";
-fi;
+    # Brew taps, formulae, casks, & mas (~/Brewfile)
+    brew bundle
 
-# brew taps, formulae, casks, & mas (~/Brewfile)
-brew bundle
+    # Remove outdated versions from the cellar
+    brew cleanup
+else
+    echo "Bash ya l8r"
+fi
 
-# Remove outdated versions from the cellar.
-brew cleanup
+###############################################################################
+# macos / OSX stuff                                                           #
+###############################################################################
 
 # Close System.Pref panes, to prevent overriding settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
@@ -41,14 +51,19 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # General UI/UX                                                               #
 ###############################################################################
 
+COMPUTER_NAME="pewta"
+
+# Set computer name (as done via System Preferences → Sharing)
+sudo scutil --set ComputerName "$COMPUTER_NAME"
+sudo scutil --set HostName "$COMPUTER_NAME"
+sudo scutil --set LocalHostName "$COMPUTER_NAME"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$COMPUTER_NAME"
+
 # Open identified developer, appstore, any all applications
 sudo spctl --master-disable
 
-# Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "pewta"
-sudo scutil --set HostName "pewta"
-sudo scutil --set LocalHostName "pewta"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "pewta"
+# Disable the “Are you sure you want to open this application?” dialog
+defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
@@ -61,9 +76,6 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
-
-# Disable the “Are you sure you want to open this application?” dialog
-defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
@@ -106,26 +118,31 @@ defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 #defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
 #defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
-###############################################################################
-# Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
-###############################################################################
-
-# Trackpad: enable tap to click for this user and for the login screen
-defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
-sudo defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-sudo defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-sudo defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
-# Increase sound quality for Bluetooth headphones/headsets
-defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
-
-# Set a blazingly fast keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 2
-defaults write NSGlobalDomain InitialKeyRepeat -int 10
+# Set format of date & hours in menu bar
+killall -KILL SystemUIServer
+killall -KILL SystemUIServer &> /dev/null
+defaults write com.apple.menuextra.clock "DateFormat" "MMM dd hh:mm"
 
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
+
+# Use list view in all Finder windows by default
+# Four-letter codes for the other view modes: `icnv`, `Nlsv`, `Flwv`
+defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
+
+# Show the ~/Library folder
+chflags nohidden ~/Library
+
+# Show the /Volumes folder
+chflags nohidden /Volumes
+
+# Expand the following File Info panes:
+# “General”, “Open with”, and “Sharing & Permissions”
+defaults write com.apple.finder FXInfoPanesExpanded -dict \
+  General -bool true \
+  OpenWith -bool true \
+  Privileges -bool true
 
 # Finder: allow quitting via ⌘ + Q; doing so will also hide desktop icons
 defaults write com.apple.finder QuitMenuItem -bool true
@@ -198,23 +215,6 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
 
-# Use list view in all Finder windows by default
-# Four-letter codes for the other view modes: `icnv`, `Nlsv`, `Flwv`
-defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
-
-# Show the ~/Library folder
-chflags nohidden ~/Library
-
-# Show the /Volumes folder
-chflags nohidden /Volumes
-
-# Expand the following File Info panes:
-# “General”, “Open with”, and “Sharing & Permissions”
-defaults write com.apple.finder FXInfoPanesExpanded -dict \
-	General -bool true \
-	OpenWith -bool true \
-	Privileges -bool true
-
 # Show icons for hard drives, servers, and removable media on the desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
@@ -270,6 +270,26 @@ defaults write com.apple.dock show-recents -bool false
 # Disable the warning before emptying the Trash
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
+# Wipe all (default) app icons from the Dock
+# This is only really useful when setting up a new Mac, or if you don’t use
+# the Dock to launch apps.
+defaults write com.apple.dock persistent-apps -array
+killall Dock
+
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/System Preferences.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+#defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Safari.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/iTunes.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Adobe Photoshop CC 2019/Adobe Photoshop CC 2019.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Photos.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Notes.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Sublime Text.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/iTerm.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Messages.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+
+sudo find /private/var/folders/ -name com.apple.dock.iconcache -exec rm {} \;
+killall Dock
+
 ###############################################################################
 # Dashboard                                                                   #
 ###############################################################################
@@ -309,9 +329,12 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 ###############################################################################
 
 # Disable Notification Center
-launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
+#launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
+
 # Remove Notification Center icon (leaves blank space)
-rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
+if [ -f /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf ]; then
+  sudo rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
+fi
 
 ###############################################################################
 # Screenshots                                                                 #
@@ -322,6 +345,44 @@ defaults write com.apple.screencapture location -string "${HOME}/Dropbox/Screens
 
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "png"
+
+###############################################################################
+# Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
+###############################################################################
+
+# Trackpad: enable tap to click for this user and for the login screen
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+sudo defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+sudo defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+sudo defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+
+# Increase sound quality for Bluetooth headphones/headsets
+defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
+
+# Set a blazingly fast keyboard repeat rate
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
+
+###############################################################################
+# Contacts, Disk Utility, Photos, TextEdit                                    #
+###############################################################################
+
+# Enable the debug menu in Contacts
+defaults write com.apple.addressbook ABShowDebugMenu -bool true
+
+# Enable the debug menu in Disk Utility
+defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
+defaults write com.apple.DiskUtility advanced-image-options -bool true
+
+# Prevent Photos from opening automatically when devices are plugged in
+defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+
+# Use plain text mode for new TextEdit documents
+defaults write com.apple.TextEdit RichText -int 0
+
+# Open and save files as UTF-8 in TextEdit
+defaults write com.apple.TextEdit PlainTextEncoding -int 4
+defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
 ###############################################################################
 # Safari & WebKit                                                             #
@@ -398,6 +459,20 @@ defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 # Update extensions automatically
 defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 
+## Enable plug-ins
+#defaults write com.apple.Safari WebKitPluginsEnabled -bool true; defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2PluginsEnabled -bool true
+## Enable Java
+#defaults write com.apple.Safari WebKitJavaEnabled -bool true; defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled -bool true
+## Don't Block pop-up windows
+#defaults write com.apple.Safari WebKitJavaScriptCanOpenWindowsAutomatically -bool true; defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically -bool true
+## Disable auto-playing video
+#defaults write com.apple.Safari WebKitMediaPlaybackAllowsInline -bool true
+#defaults write com.apple.SafariTechnologyPreview WebKitMediaPlaybackAllowsInline -bool true
+#defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool true
+#defaults write com.apple.SafariTechnologyPreview com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool true
+## Enable “Do Not Track”
+#defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool false
+
 ###############################################################################
 # Mail                                                                        #
 ###############################################################################
@@ -424,80 +499,34 @@ defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnabled"
 
 ###############################################################################
-# Terminal                                                                    #
+# Messages                                                                    #
 ###############################################################################
 
-# Only use UTF-8 in Terminal.app
-defaults write com.apple.terminal StringEncodings -array 4
+# Disable automatic emoji substitution (i.e. use plain text smileys)
+defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
 
-# Use a modified version of the Solarized Dark theme by default in Terminal.app
-osascript <<EOD
+# Disable smart quotes as it’s annoying for messages that contain code
+defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticQuoteSubstitutionEnabled" -bool false
 
-tell application "Terminal"
-
-	local allOpenedWindows
-	local initialOpenedWindows
-	local windowID
-	set themeName to "Solarized Dark xterm-256color"
-
-	(* Store the IDs of all the open terminal windows. *)
-	set initialOpenedWindows to id of every window
-
-	(* Open the custom theme so that it gets added to the list
-	   of available terminal themes (note: this will open two
-	   additional terminal windows). *)
-	do shell script "open '$HOME/init/" & themeName & ".terminal'"
-
-	(* Wait a little bit to ensure that the custom theme is added. *)
-	delay 1
-
-	(* Set the custom theme as the default terminal theme. *)
-	set default settings to settings set themeName
-
-	(* Get the IDs of all the currently opened terminal windows. *)
-	set allOpenedWindows to id of every window
-
-	repeat with windowID in allOpenedWindows
-
-		(* Close the additional windows that were opened in order
-		   to add the custom theme to the list of terminal themes. *)
-		if initialOpenedWindows does not contain windowID then
-			close (every window whose id is windowID)
-
-		(* Change the theme for the initial opened terminal windows
-		   to remove the need to close them in order for the custom
-		   theme to be applied. *)
-		else
-			set current settings of tabs of (every window whose id is windowID) to settings set themeName
-		end if
-
-	end repeat
-
-end tell
-
-EOD
-
-# Enable “focus follows mouse” for Terminal.app and all X11 apps
-# i.e. hover over a window and start typing in it without clicking first
-defaults write com.apple.terminal FocusFollowsMouse -bool true
-defaults write org.x.X11 wm_ffm -bool true
-
-# Enable Secure Keyboard Entry in Terminal.app
-# See: https://security.stackexchange.com/a/47786/8918
-defaults write com.apple.terminal SecureKeyboardEntry -bool true
-
-# Disable the annoying line marks
-defaults write com.apple.Terminal ShowLineMarks -int 0
+# Disable continuous spell checking
+defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
 
 ###############################################################################
-# iTerm 2                                                                     #
+# Time Machine                                                                #
 ###############################################################################
 
-# Install the Solarized Dark theme for iTerm
-open "init/Solarized Dark.itermcolors"
+# Prevent Time Machine from prompting to use new hard drives as backup volume
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
-# Don’t display the annoying prompt when quitting iTerm
-defaults write com.googlecode.iterm2 PromptOnQuit -bool false
+# Disable automatic backups
+sudo tmutil disable
+
+# Delete all the snapshots, 1 at a time:
+for snap in $(tmutil listLocalSnapShots / | cut -d '.' -f 4); do
+sudo tmutil deleteLocalSnapshots $snap; done
+
+# List the snapshots
+#tmutil listLocalSnapShots /
 
 ###############################################################################
 # Activity Monitor                                                            #
@@ -517,62 +546,12 @@ defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
 defaults write com.apple.ActivityMonitor SortDirection -int 0
 
 ###############################################################################
-# Messages                                                                    #
-###############################################################################
-
-# Disable automatic emoji substitution (i.e. use plain text smileys)
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
-
-# Disable smart quotes as it’s annoying for messages that contain code
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticQuoteSubstitutionEnabled" -bool false
-
-# Disable continuous spell checking
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
-
-###############################################################################
-# Contacts, Disk Utility, Photos, TextEdit                                    #
-###############################################################################
-
-# Enable the debug menu in Contacts
-defaults write com.apple.addressbook ABShowDebugMenu -bool true
-
-# Enable the debug menu in Disk Utility
-defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
-defaults write com.apple.DiskUtility advanced-image-options -bool true
-
-# Prevent Photos from opening automatically when devices are plugged in
-defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
-
-# Use plain text mode for new TextEdit documents
-defaults write com.apple.TextEdit RichText -int 0
-
-# Open and save files as UTF-8 in TextEdit
-defaults write com.apple.TextEdit PlainTextEncoding -int 4
-defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
-
-###############################################################################
-# Time Machine                                                                #
-###############################################################################
-
-# Prevent Time Machine from prompting to use new hard drives as backup volume
-defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
-
-# Disable automatic backups
-sudo tmutil disable
-
-# List the snapshots
-#tmutil listLocalSnapShots /
-
-# Delete all the snapshots, 1 at a time:
-for snap in $(tmutil listLocalSnapShots / | cut -d '.' -f 4); do
-sudo tmutil deleteLocalSnapshots $snap; done
-
-# Verify that all of the snapshots are gone:
-#tmutil listLocalSnapShots /
-
-###############################################################################
 # App Store                                                                   #
 ###############################################################################
+
+# Turn off video autoplay
+defaults write com.apple.AppStore UserSetAutoPlayVideoSetting -int 1
+defaults write com.apple.AppStore AutoPlayVideoSetting -string off
 
 # Enable the WebKit Developer Tools in the Mac App Store
 defaults write com.apple.appstore WebKitDeveloperExtras -bool true
@@ -606,7 +585,7 @@ defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
 ###############################################################################
 
 # Prevent Adobe CC auto-launch
-launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
+launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist 2> /dev/null
 
 ###############################################################################
 # Sublime Text                                                                #
@@ -615,11 +594,95 @@ launchctl unload -w /Library/LaunchAgents/com.adobe.AdobeCreativeCloud.plist
 # Install Sublime Text settings
 cp -r init/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text*/Packages/User/Preferences.sublime-settings 2> /dev/null
 
-#remove license popups
+# Remove Purchase popups
+if [ ! -f ~/Library/Application\ Support/Sublime\ Text*/Packages/User/killic.py ]; then
 cp -r init/killic.py ~/Library/Application\ Support/Sublime\ Text*/Packages/User/killic.py 2> /dev/null
+fi
 
-# st3 license check
-echo "127.0.0.1 license.sublimehq.com" >> /etc/hosts
+# Prevent Sublime Text license check
+#echo "127.0.0.1 license.sublimehq.com" >> /etc/hosts
+
+###############################################################################
+# Terminal                                                                    #
+###############################################################################
+
+# Only use UTF-8 in Terminal.app
+defaults write com.apple.terminal StringEncodings -array 4
+
+# Use a modified version of the Solarized Dark theme by default in Terminal.app
+#osascript <<EOD
+#
+#tell application "Terminal"
+#
+#  local allOpenedWindows
+#  local initialOpenedWindows
+#  local windowID
+#  set themeName to "Solarized Dark xterm-256color"
+#
+#  (* Store the IDs of all the open terminal windows. *)
+#  set initialOpenedWindows to id of every window
+#
+#  (* Open the custom theme so that it gets added to the list
+#     of available terminal themes (note: this will open two
+#     additional terminal windows). *)
+#  do shell script "open '$HOME/init/" & themeName & ".terminal'"
+#
+#  (* Wait a little bit to ensure that the custom theme is added. *)
+#  delay 1
+#
+#  (* Set the custom theme as the default terminal theme. *)
+#  set default settings to settings set themeName
+#
+#  (* Get the IDs of all the currently opened terminal windows. *)
+#  set allOpenedWindows to id of every window
+#
+#  repeat with windowID in allOpenedWindows
+#
+#    (* Close the additional windows that were opened in order
+#       to add the custom theme to the list of terminal themes. *)
+#    if initialOpenedWindows does not contain windowID then
+#      close (every window whose id is windowID)
+#
+#    (* Change the theme for the initial opened terminal windows
+#       to remove the need to close them in order for the custom
+#       theme to be applied. *)
+#    else
+#      set current settings of tabs of (every window whose id is windowID) to settings set themeName
+#    end if
+#
+#  end repeat
+#
+#end tell
+#
+#EOD
+
+# Enable “focus follows mouse” for Terminal.app and all X11 apps
+# i.e. hover over a window and start typing in it without clicking first
+defaults write com.apple.terminal FocusFollowsMouse -bool true
+defaults write org.x.X11 wm_ffm -bool true
+
+# Enable Secure Keyboard Entry in Terminal.app
+# See: https://security.stackexchange.com/a/47786/8918
+defaults write com.apple.terminal SecureKeyboardEntry -bool true
+
+# Disable the annoying line marks
+defaults write com.apple.Terminal ShowLineMarks -int 0
+
+# Install themes for Terminal
+#for i in ~/init/terminal/*.terminal; do open -g "$i"; done
+
+###############################################################################
+# iTerm 2                                                                     #
+###############################################################################
+
+# Install themes for iTerm
+#for i in ~/init/itermcolors/*.itermcolors; do open -g "$i"; done
+
+# Don’t display the annoying prompt when quitting iTerm
+defaults write com.googlecode.iterm2 PromptOnQuit -bool false
+
+# Quit iTerm when all windows are closed
+defaults write com.googlecode.iterm2 QuitWhenAllWindowsClosed -bool true
 
 ###############################################################################
 # Transmission.app                                                            #
@@ -675,6 +738,14 @@ for app in "Activity Monitor" \
 	"Transmission"; do
 	killall "${app}" &> /dev/null
 done
+
 echo "Done. Note that some of these changes require a logout/restart to take effect."
+
+echo -n "Reboot? (y/n) "
+read answer
+if echo "$answer" | grep -iq "^y"
+then
+  sudo reboot
+fi
 
 # ~/.macos — https://mths.be/macos

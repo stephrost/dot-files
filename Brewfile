@@ -7,6 +7,7 @@ tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
 tap "martido/brew-graph"
+cask "xquartz"
 brew "aacgain"
 brew "aamath"
 brew "align"
@@ -65,9 +66,12 @@ brew "rsync"
 brew "screen"
 brew "simg2img"
 brew "socat"
+brew "tmux"
 brew "tree"
 brew "vim"
 brew "wget"
+brew "wmctrl"
+brew "wtf"
 brew "youtube-dl"
 brew "beeftornado/rmtree/brew-rmtree"
 brew "martido/brew-graph/brew-graph"
@@ -79,6 +83,8 @@ cask "anaconda"
 cask "android-file-transfer"
 cask "android-platform-tools"
 cask "android-sdk"
+cask "appcleaner"
+cask "apple-brother-printer-drivers"
 cask "asset-catalog-tinkerer"
 cask "balenaetcher"
 cask "bartender"
@@ -144,17 +150,10 @@ cask "visual-studio-code"
 cask "vlc"
 cask "vnc-viewer"
 cask "webpquicklook"
-cask "xquartz"
 mas "Amphetamine", id: 937984704
 mas "Bear", id: 1091189122
 mas "DaisyDisk", id: 411643860
 mas "Devslopes", id: 1183088305
-mas "Install macOS High Sierra", id: 0
-mas "Install macOS Mojave", id: 0
-mas "Install macOS Sierra", id: 1127487414
-mas "Install OS X Mavericks", id: 675248567
-mas "Install OS X Mountain Lion", id: 537386512
-mas "Install OS X Yosemite", id: 915041082
 mas "Keka", id: 470158793
 mas "Keynote", id: 409183694
 mas "Magnet", id: 441258766
@@ -166,3 +165,4 @@ mas "Pocket", id: 568494494
 mas "Smart Converter Pro 2", id: 660234210
 mas "Termius", id: 1176074088
 mas "TextWrangler", id: 404010395
+mas "Xcode", id: 497799835
