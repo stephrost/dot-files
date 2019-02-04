@@ -1,5 +1,10 @@
  #!/usr/bin/env bash
 
+# have homebrew installed
+
+# allow Full Disk Access to iterm.app, terminal.app, tmux, and bash
+# in System Preferences > Security & Privacy > Privacy
+
 ###############################################################################
 # Homebrew & Bash                                                             #
 ###############################################################################
@@ -277,7 +282,6 @@ defaults write com.apple.dock persistent-apps -array
 killall Dock
 
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/System Preferences.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
-#defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Safari.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/iTunes.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Adobe Photoshop CC 2019/Adobe Photoshop CC 2019.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
@@ -287,11 +291,12 @@ defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/iTerm.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Messages.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 
+# Clear Icon Cache? Use LiteIcon
 sudo find /private/var/folders/ -name com.apple.dock.iconcache -exec rm {} \;
 killall Dock
 
 ###############################################################################
-# Dashboard                                                                   #
+# Dashboard, Launchpad, Mission Control, Notification Center                  #
 ###############################################################################
 
 # Disable Dashboard
@@ -303,19 +308,11 @@ defaults write com.apple.dock dashboard-in-overlay -bool true
 # Enable Dashboard dev mode (allows keeping widgets on the desktop)
 #defaults write com.apple.dashboard devmode -bool true
 
-###############################################################################
-# Launchpad                                                                   #
-###############################################################################
-
 # Set Launchpad dimensions
 defaults write com.apple.dock springboard-columns -int 12
 defaults write com.apple.dock springboard-rows -int 7
 defaults write com.apple.dock ResetLaunchPad -bool true
 killall Dock
-
-###############################################################################
-# Mission Control                                                             #
-###############################################################################
 
 # Don’t group windows by application in Mission Control
 # (i.e. use the old Exposé behavior instead)
@@ -324,15 +321,12 @@ killall Dock
 # Speed up Mission Control animations
 defaults write com.apple.dock expose-animation-duration -float 0.1
 
-###############################################################################
-# Notification Center                                                         #
-###############################################################################
-
 # Disable Notification Center
 #launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
 
 # Remove Notification Center icon (leaves blank space)
-if [ -f /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf ]; then
+if [ -f /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf ]
+then
   sudo rm /System/Library/CoreServices/SystemUIServer.app/Contents/Resources/menuitemNormal.pdf
 fi
 
@@ -347,7 +341,7 @@ defaults write com.apple.screencapture location -string "${HOME}/Dropbox/Screens
 defaults write com.apple.screencapture type -string "png"
 
 ###############################################################################
-# Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
+# Trackpad, mouse, keyboard, Bluetooth accessories, input                     #
 ###############################################################################
 
 # Trackpad: enable tap to click for this user and for the login screen
