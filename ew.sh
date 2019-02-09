@@ -30,6 +30,9 @@ then
       chsh -s "${BREW_PREFIX}/bin/bash";
     fi;
 
+    # my Casks
+    cp ~/dot-files/cask/* /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask/Casks/
+
     # Brew taps, formulae, casks, & mas (~/Brewfile)
     brew bundle
 
@@ -276,20 +279,23 @@ defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
 # Wipe all (default) app icons from the Dock
-# This is only really useful when setting up a new Mac, or if you don’t use
-# the Dock to launch apps.
+# Only when setting up a new Mac, or if you don’t use the Dock
 defaults write com.apple.dock persistent-apps -array
 killall Dock
 
+# Dock apps
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/System Preferences.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Safari.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/iTunes.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Adobe Photoshop CC 2019/Adobe Photoshop CC 2019.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Photos.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Notes.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Visual Studio Code.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Sublime Text.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/iTerm.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Messages.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Hopper Disassembler v4.app/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Xcode.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 
 # Clear Icon Cache? Use LiteIcon
 sudo find /private/var/folders/ -name com.apple.dock.iconcache -exec rm {} \;
@@ -429,6 +435,9 @@ defaults write com.apple.Safari WebAutomaticSpellingCorrectionEnabled -bool fals
 # Warn about fraudulent websites
 defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true
 
+# Update extensions automatically
+defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
+
 # Disable plug-ins
 defaults write com.apple.Safari WebKitPluginsEnabled -bool false
 defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2PluginsEnabled -bool false
@@ -449,23 +458,6 @@ defaults write com.apple.SafariTechnologyPreview com.apple.Safari.ContentPageGro
 
 # Enable “Do Not Track”
 defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
-
-# Update extensions automatically
-defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
-
-## Enable plug-ins
-#defaults write com.apple.Safari WebKitPluginsEnabled -bool true; defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2PluginsEnabled -bool true
-## Enable Java
-#defaults write com.apple.Safari WebKitJavaEnabled -bool true; defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled -bool true
-## Don't Block pop-up windows
-#defaults write com.apple.Safari WebKitJavaScriptCanOpenWindowsAutomatically -bool true; defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically -bool true
-## Disable auto-playing video
-#defaults write com.apple.Safari WebKitMediaPlaybackAllowsInline -bool true
-#defaults write com.apple.SafariTechnologyPreview WebKitMediaPlaybackAllowsInline -bool true
-#defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool true
-#defaults write com.apple.SafariTechnologyPreview com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool true
-## Enable “Do Not Track”
-#defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool false
 
 ###############################################################################
 # Mail                                                                        #
